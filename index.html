@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Book List</title>
+  <style>
+    body {
+      background-color: #f7f7f7;
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    table {
+      margin: 0 auto;
+      border-collapse: collapse;
+      width: 80%;
+      background: #fff;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 12px;
+      text-align: left;
+    }
+    th {
+      background: #e2e2e2;
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+</head>
+<body>
+  <h1>My Books</h1>
+  <table>
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Author</th>
+        <th>ISBN</th>
+      </tr>
+    </thead>
+    <tbody id="bookData"></tbody>
+  </table>
+
+  <script>
+    const SUPABASE_URL = "https://mkrrfozmwbljzrrgvydf.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1rcnJmb3ptd2Jsanpycmd2eWRmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDIyNTY1ODgsImV4cCI6MjA1NzgzMjU4OH0.zjW588P5Y-I7EE46bYOw88-jEBp7lWwNFdSZZIOvjK0";
+
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // Fetch data from the "book" table
+    async function fetchBookData() {
+      let { data, error } = await supabase
+        .from('book')
+        .select('"Title", "author", "ISBN"');
+
+      if (error) {
+        console.error("Error fetching books:", error);
+        return;
+      }
+
+      const tableBody = document.getElementById("bookData");
+      tableBody.innerHTML = "";
+
+      data.forEach(book => {
+        const rowHTML = `
+          <tr>
+            <td>${book.Title}</td>
+            <td>${book.author}</td>
+            <td>${book.ISBN}</td>
+          </tr>
+        `;
+        tableBody.innerHTML += rowHTML;
+      });
+    }
+
+    window.addEventListener("load", fetchBookData);
+  </script>
+</body>
+</html>
